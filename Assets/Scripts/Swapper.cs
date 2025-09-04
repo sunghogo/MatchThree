@@ -16,28 +16,63 @@ public class Swapper : MonoBehaviour
     [field: Header("Queued Tiles for Swapping")]
     [field: SerializeField] public List<Tile> QueuedTiles { get; private set; } = new List<Tile>();
 
-    IEnumerator SwapRoutine(Tile tile1, Tile tile2, float duration = 1f)
+    public IEnumerator SwapRoutine(Tile tile1, Tile tile2, float duration = 1f)
     {
-        Vector3 start1 = tile1.Rb.position;
-        Vector3 start2 = tile2.Rb.position;
+        // Save world positions of the tiles (these stay as the "grid positions")
+        Vector3 gridPos1 = tile1.transform.position;
+        Vector3 gridPos2 = tile2.transform.position;
+
+        // Get sprite transforms (child objects)
+        Transform sprite1 = tile1.Sprite.transform;
+        Transform sprite2 = tile2.Sprite.transform;
+
+        // Cache their starting positions
+        Vector3 startSpritePos1 = sprite1.position;
+        Vector3 startSpritePos2 = sprite2.position;
 
         float t = 0f;
-
         IsSwapping = true;
+
+        // Lerp the sprites visually between the two slots
         while (t < 1f)
         {
-            t += Time.fixedDeltaTime / duration;
+            t += Time.deltaTime / duration;
 
-            Vector3 pos1 = Vector3.Lerp(start1, start2, t);
-            Vector3 pos2 = Vector3.Lerp(start2, start1, t);
+            sprite1.position = Vector3.Lerp(startSpritePos1, gridPos2, t);
+            sprite2.position = Vector3.Lerp(startSpritePos2, gridPos1, t);
 
-            tile1.Rb.MovePosition(pos1);
-            tile2.Rb.MovePosition(pos2);
+            yield return new WaitForFixedUpdate(); 
+        }
 
+        // Snap sprites back to center of their new slots
+        sprite1.position = gridPos2;
+        sprite2.position = gridPos1;
+
+        // Now swap the *tile objects* in the grid (so colliders move once)
+        Vector3 temp = tile1.transform.position;
+        tile1.transform.position = gridPos2;
+        tile2.transform.position = temp;
+
+        // Reset sprite positions relative to their new parent
+        sprite1.localPosition = Vector3.zero;
+        sprite2.localPosition = Vector3.zero;
+
+        // Delay for neighbor readjustment
+        t = 0f;
+        while (t < duration * 0.5f)
+        {
+            t += Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
+
         IsSwapping = false;
-        SwapNeighbors(tile1, tile2);
+        tile1.TurnOnPhysics();
+        tile2.TurnOnPhysics();
+        QueuedTiles.Clear();
+
+        // Check matches only once the swap is finalized
+        tile1.ProcessMatch();
+        tile2.ProcessMatch();
     }
 
     public void PickTile(Tile tile)
@@ -48,6 +83,7 @@ public class Swapper : MonoBehaviour
         {
             case 0:
                 QueuedTiles.Add(tile);
+                tile.ToggleOnPulsing();
                 break;
             case 1:
                 if (!QueuedTiles.Contains(tile))
@@ -58,14 +94,17 @@ public class Swapper : MonoBehaviour
                         foreach (var swappedTiles in QueuedTiles)
                         {
                             swappedTiles.TurnOffPhysics();
-                            swappedTiles.TogglePulsing();
+                            swappedTiles.TurnOffPulsing();
                         }
                         SwapTiles();
-                        QueuedTiles.Clear();
                     }
-                    else tile.TogglePulsing();
+                    else tile.TurnOffPulsing();
                 }
-                else QueuedTiles.Remove(tile);
+                else
+                {
+                    tile.TurnOffPulsing();
+                    QueuedTiles.Remove(tile);
+                }
                 break;
             default:
                 QueuedTiles.Clear();
@@ -73,20 +112,26 @@ public class Swapper : MonoBehaviour
         }
     }
 
-    void SwapTiles()
+    public void RemoveTile(Tile tile)
     {
-        StartCoroutine(SwapRoutine(QueuedTiles[0], QueuedTiles[1], duration));
+        QueuedTiles.Remove(tile);
     }
 
-    void SwapNeighbors(Tile tile1, Tile tile2)
+    void SwapTiles()
     {
-        List<Tile> temp = tile1.Neighbors;
-        tile1.SetNeighbors(tile2.Neighbors);
-        tile2.SetNeighbors(temp);
-        // tile1.RemoveNeighbor(tile1);
-        // tile2.RemoveNeighbor(tile2);
-        foreach (Tile neighbor in tile1.Neighbors) neighbor.RemoveNeighbor(tile2);
-        foreach (Tile neighbor in tile2.Neighbors) neighbor.RemoveNeighbor(tile1);
+        Tile tile1 = QueuedTiles[0];
+        Tile tile2 = QueuedTiles[1];
+
+        if (tile1 == null || tile2 == null)
+        {
+            if (tile1 != null) tile1.TurnOffPulsing();
+            if (tile2 != null) tile2.TurnOffPulsing();
+            QueuedTiles.Clear();
+            return;
+        }
+
+        GameManager.Instance.DecrementMoves();
+        StartCoroutine(SwapRoutine(QueuedTiles[0], QueuedTiles[1], duration));
     }
 
     bool AreNeighbors(Tile tile1, Tile tile2)

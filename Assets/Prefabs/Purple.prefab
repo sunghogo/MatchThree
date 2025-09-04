@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: <Type>k__BackingField
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6236336748889742271, guid: 7c879231e6ed44e139e539a3a4c5be1f, type: 3}
+      propertyPath: <TileType>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7289821801923764883, guid: 7c879231e6ed44e139e539a3a4c5be1f, type: 3}
       propertyPath: m_Name
       value: Purple

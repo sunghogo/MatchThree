@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5788422616957823481
+--- !u!1 &3935471127167832958
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,24 +8,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4246217313241175455}
-  - component: {fileID: 580920901405796256}
-  - component: {fileID: 7689382331554017691}
-  - component: {fileID: 2802135216049393272}
+  - component: {fileID: 7395743163974215346}
+  - component: {fileID: 8080070457017691868}
+  - component: {fileID: 3985914425455161635}
+  - component: {fileID: 6626337841867174532}
   m_Layer: 5
-  m_Name: HighScore
-  m_TagString: High Score
+  m_Name: Game Over
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &4246217313241175455
+--- !u!224 &7395743163974215346
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5788422616957823481}
+  m_GameObject: {fileID: 3935471127167832958}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -33,43 +33,43 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -225, y: -40}
-  m_SizeDelta: {x: 425, y: 50}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 40, y: 0}
+  m_SizeDelta: {x: 275, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &580920901405796256
+--- !u!222 &8080070457017691868
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5788422616957823481}
+  m_GameObject: {fileID: 3935471127167832958}
   m_CullTransparentMesh: 1
---- !u!114 &7689382331554017691
+--- !u!114 &3985914425455161635
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5788422616957823481}
+  m_GameObject: {fileID: 3935471127167832958}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e7b44f9eed0430994fe3408bdafb40, type: 3}
+  m_Script: {fileID: 11500000, guid: 675827a50dcca448d8a9265c3d48eb6d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2802135216049393272
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverTMP
+--- !u!114 &6626337841867174532
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5788422616957823481}
+  m_GameObject: {fileID: 3935471127167832958}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -78,7 +78,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'High Score: 0'
+  m_text: Game Over
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 17fd7bac04a1f4e15864727700e89324, type: 2}
   m_sharedMaterial: {fileID: -8600808888973017668, guid: 17fd7bac04a1f4e15864727700e89324, type: 2}
@@ -87,8 +87,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

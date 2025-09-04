@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Tile
+  - Score
+  - Moves
+  - High Score
   layers:
   - Default
   - TransparentFX

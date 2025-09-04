@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 public enum GameState
 {
@@ -14,6 +13,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public static event Action<int> OnScoreChanged;
     public static event Action<int> OnHighScoreChanged;
+    public static event Action<int> OnMovesChanged;
+    public static event Action OnMatch;
 
     public static event Action OnNextLevel;
     public static event Action OnGameStart;
@@ -31,9 +32,7 @@ public class GameManager : MonoBehaviour
     [field: Header("Shared Data")]
     [field: SerializeField] public int Score { get; private set; } = 0;
     [field: SerializeField] public int HighScore { get; private set; } = 0;
-    [field: SerializeField] public List<Tile> SwapTiles { get; private set; } = new List<Tile>(2);
-
-    private float timer = 0f;
+    [field: SerializeField] public int Moves { get; private set; } = 10;
 
     public void IncrementScore()
     {
@@ -53,6 +52,19 @@ public class GameManager : MonoBehaviour
         OnHighScoreChanged?.Invoke(HighScore);
     }
 
+    public void DecrementMoves()
+    {
+        --Moves;
+        OnMovesChanged?.Invoke(Moves);
+        if (Moves == 0) EndGame();
+    }
+
+    public void ResetMoves()
+    {
+        Moves = 10;
+        OnMovesChanged?.Invoke(Moves);
+    }
+
     public void StartGame()
     {
         StartingScreen = false;
@@ -60,10 +72,13 @@ public class GameManager : MonoBehaviour
         GameOver = false;
         ChangeLevel = false;
         GameWin = false;
+        if (Score > HighScore)
+        {
+            UpdateHighScore();
+        }
+        ResetMoves();
         ResetScore();
-        timer = 0f;
         OnGameStart?.Invoke();
-        OnScoreChanged?.Invoke(Score);
         OnHighScoreChanged?.Invoke(HighScore);
     }
 
@@ -100,21 +115,12 @@ public class GameManager : MonoBehaviour
         GameOver = false;
         ChangeLevel = false;
         GameWin = true;
-        if (HighScore == 0 || Score < HighScore)
-        {
-            UpdateHighScore();
-        }
         OnGameWin?.Invoke();
     }
 
-    void ProcessTime()
+    public void Matched()
     {
-        timer += Time.fixedDeltaTime;
-        if (timer > 1f)
-        {
-            --timer; ;
-            IncrementScore();
-        }
+        OnMatch?.Invoke();
     }
 
     void Awake()
@@ -126,11 +132,6 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-
-    void FixedUpdate()
-    {
-        if (GameStart) ProcessTime();
     }
 
     void Start()
