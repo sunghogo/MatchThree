@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEditor.U2D.Aseprite;
+using System.Threading;
 
 public enum GameState
 {
@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     [field: SerializeField] public int Moves { get; private set; } = 10;
     [field: SerializeField] public List<Tile> Tiles { get; private set; } = new List<Tile>();
     [field: SerializeField] public Queue<Tile> MatchQueue { get; private set; } = new Queue<Tile>();
+
+    [SerializeField] float matchTimer = 0f;
 
     public void IncrementScore()
     {
@@ -154,12 +156,12 @@ public class GameManager : MonoBehaviour
 
     public void ProcessAllMatches()
     {
-        if (AllTilesSet())
+        if (MatchQueue.Count > 0 && AllTilesSet())
         {
             while (MatchQueue.Count > 0)
             {
                 var tile = MatchQueue.Dequeue();
-                tile.ProcessMatch();
+                if (tile != null) tile.ProcessMatch();
             }
         }
     }
@@ -182,6 +184,11 @@ public class GameManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        ProcessAllMatches();
+        if (matchTimer >= 0.5f)
+        {
+            ProcessAllMatches();
+            matchTimer = 0f;
+        }
+        matchTimer += Time.fixedDeltaTime;
     }
 }
