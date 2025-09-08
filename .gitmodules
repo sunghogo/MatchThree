@@ -1,0 +1,3 @@
+[submodule "Match Three WebGL Build"]
+	path = Match Three WebGL Build
+	url = https://github.com/sunghogo/MatchThreeWebGL.git

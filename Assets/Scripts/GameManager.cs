@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using UnityEditor.U2D.Aseprite;
 
 public enum GameState
 {
@@ -33,6 +35,8 @@ public class GameManager : MonoBehaviour
     [field: SerializeField] public int Score { get; private set; } = 0;
     [field: SerializeField] public int HighScore { get; private set; } = 0;
     [field: SerializeField] public int Moves { get; private set; } = 10;
+    [field: SerializeField] public List<Tile> Tiles { get; private set; } = new List<Tile>();
+    [field: SerializeField] public Queue<Tile> MatchQueue { get; private set; } = new Queue<Tile>();
 
     public void IncrementScore()
     {
@@ -123,6 +127,43 @@ public class GameManager : MonoBehaviour
         OnMatch?.Invoke();
     }
 
+    public void AddTile(Tile tile)
+    {
+        Tiles.Add(tile);
+    }
+
+    public void RemoveTile(Tile tile)
+    {
+        Tiles.Remove(tile);
+    }
+
+    public bool AllTilesSet()
+    {
+        if (Tiles.Count < 96) return false;
+        foreach (var tile in Tiles)
+        {
+            if (tile.IsFalling) return false;
+        }
+        return true;
+    }
+
+    public void QueueTileForMatch(Tile tile)
+    {
+        MatchQueue.Enqueue(tile);
+    }
+
+    public void ProcessAllMatches()
+    {
+        if (AllTilesSet())
+        {
+            while (MatchQueue.Count > 0)
+            {
+                var tile = MatchQueue.Dequeue();
+                tile.ProcessMatch();
+            }
+        }
+    }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -136,6 +177,11 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Instance.StartScreen();   
+        Instance.StartScreen();
+    }
+
+    void FixedUpdate()
+    {
+        ProcessAllMatches();
     }
 }

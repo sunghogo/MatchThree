@@ -23,6 +23,9 @@ public class UpdatedTMP : MonoBehaviour
             if (GameManager.Instance) tmp.text = GameManager.Instance.Moves.ToString();
             GameManager.OnMovesChanged += UpdateText;
         }
+
+        if (!gameObject.CompareTag("High Score")) GameManager.OnScreenStart += HandleScreenStart;
+        GameManager.OnGameStart += HandleGameStart;
     }
 
     void OnDestroy()
@@ -30,10 +33,23 @@ public class UpdatedTMP : MonoBehaviour
         if (gameObject.CompareTag("Score")) GameManager.OnScoreChanged -= UpdateText;
         else if (gameObject.CompareTag("High Score")) GameManager.OnHighScoreChanged -= UpdateText;
         else if (gameObject.CompareTag("Moves")) GameManager.OnMovesChanged -= UpdateText;
+
+        if (!gameObject.CompareTag("High Score")) GameManager.OnScreenStart -= HandleScreenStart;
+        GameManager.OnGameStart -= HandleGameStart;
     }
 
     void UpdateText(int number)
     {
         tmp.text = $"{gameObject.tag}: {number}";
+    }
+
+    void HandleGameStart()
+    {
+        tmp.enabled = true;
+    }
+
+    void HandleScreenStart()
+    { 
+        tmp.enabled = false;
     }
 }

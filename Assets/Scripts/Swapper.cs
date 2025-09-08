@@ -41,7 +41,7 @@ public class Swapper : MonoBehaviour
             sprite1.position = Vector3.Lerp(startSpritePos1, gridPos2, t);
             sprite2.position = Vector3.Lerp(startSpritePos2, gridPos1, t);
 
-            yield return new WaitForFixedUpdate(); 
+            yield return new WaitForFixedUpdate();
         }
 
         // Snap sprites back to center of their new slots
@@ -66,18 +66,21 @@ public class Swapper : MonoBehaviour
         }
 
         IsSwapping = false;
-        tile1.TurnOnPhysics();
-        tile2.TurnOnPhysics();
+        if (tile1 != null) tile1.TurnOnPhysics();
+        if (tile2 != null) tile2.TurnOnPhysics();
         QueuedTiles.Clear();
 
         // Check matches only once the swap is finalized
-        tile1.ProcessMatch();
-        tile2.ProcessMatch();
+        if (tile1 != null) GameManager.Instance.QueueTileForMatch(tile1);
+        if (tile2 != null) GameManager.Instance.QueueTileForMatch(tile2);
+        GameManager.Instance.ProcessAllMatches();
     }
 
     public void PickTile(Tile tile)
     {
-        if (IsSwapping) return;
+        if (IsSwapping || GameManager.Instance.MatchQueue.Count > 0) {
+            return;
+        }
 
         switch (QueuedTiles.Count)
         {
@@ -119,6 +122,12 @@ public class Swapper : MonoBehaviour
 
     void SwapTiles()
     {
+        if (GameManager.Instance.MatchQueue.Count > 0)
+        {
+            QueuedTiles.Clear();
+            return;
+        }
+        
         Tile tile1 = QueuedTiles[0];
         Tile tile2 = QueuedTiles[1];
 

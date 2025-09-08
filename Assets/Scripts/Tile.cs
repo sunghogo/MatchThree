@@ -66,10 +66,12 @@ public class Tile : MonoBehaviour
     {
         Rb.bodyType = RigidbodyType2D.Kinematic;
         Rb.linearVelocity = Vector2.zero;
+        IsFalling = false;
     }
 
     public void TurnOnPhysics()
     {
+        IsFalling = true;
         Rb.bodyType = RigidbodyType2D.Dynamic;
         Rb.linearVelocity = Vector2.down * Time.fixedDeltaTime * 0.5f;
     }
@@ -209,6 +211,8 @@ public class Tile : MonoBehaviour
     void OnDestroy()
     {
         if (Swapper.Instance.QueuedTiles.Contains(this)) Swapper.Instance.RemoveTile(this);
+        GameManager.Instance.Tiles.Remove(this);
+
         GameManager.OnMatch -= TurnOnPhysics;
         GameManager.OnGameStart -= DestroyNoPoints;
     }
@@ -217,18 +221,16 @@ public class Tile : MonoBehaviour
     {
         baseScale = Sprite.localScale;
         TurnOnPhysics();
-        // Hide();
     }
 
     void FixedUpdate()
     {
-        // ProcessRevealing();
-        if (Rb.linearVelocityY > 0)
+        if (Rb.linearVelocityY >= 0) // When it bounces up
         {
             TurnOffPhysics();
-            IsFalling = false;
             transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), Mathf.Round(transform.position.z));
-            ProcessMatch();
+            GameManager.Instance.QueueTileForMatch(this);
+            GameManager.Instance.ProcessAllMatches();
         }
         ProcessPulsing();
     }

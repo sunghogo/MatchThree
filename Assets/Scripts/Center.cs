@@ -8,7 +8,6 @@ public class Center : MonoBehaviour
     {
         if (collision.CompareTag("Tile") && collision.transform != Parent)
         {
-            Debug.Log(collision.name);
             collision.gameObject.GetComponent<Tile>().DestroyNoPoints();
             GameManager.Instance.Matched();
         }

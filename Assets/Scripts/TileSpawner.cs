@@ -22,7 +22,8 @@ public class TileSpawner : MonoBehaviour
     {
         GameObject prefab = GetPrefabForTileType(SpawnedType);
         if (prefab == null) return;
-        Instantiate(prefab, transform.position, Quaternion.identity, transform);
+        Tile tile = Instantiate(prefab, transform.position, Quaternion.identity, transform).GetComponent<Tile>();
+        GameManager.Instance.Tiles.Add(tile);
         CanSpawn = false;
     }
 
