@@ -18,7 +18,6 @@ public class TileSpawner : MonoBehaviour
     [field: Header("Properties")]
     [field: SerializeField] public TileType SpawnedType { get; private set; }
 
-
     public void SpawnRandomTile()
     {
         GameObject prefab = GetPrefabForTileType(SpawnedType);

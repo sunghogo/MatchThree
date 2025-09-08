@@ -7,6 +7,7 @@ public class Tile : MonoBehaviour
     [field: SerializeField] public Rigidbody2D Rb { get; protected set; }
     [field: SerializeField] public Transform Sprite { get; protected set; }
 
+
     [field: Header("State")]
     [field: SerializeField] bool isPulsing = false;
     [field: SerializeField] public bool IsFalling { get; protected set; } = true;
@@ -226,7 +227,7 @@ public class Tile : MonoBehaviour
         {
             TurnOffPhysics();
             IsFalling = false;
-            transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y ), Mathf.Round(transform.position.z));
+            transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), Mathf.Round(transform.position.z));
             ProcessMatch();
         }
         ProcessPulsing();
